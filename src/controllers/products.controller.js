@@ -17,4 +17,23 @@ productsController.getAll = (req, res) => {
         });
 };
 
+productsController.getOne = (req, res) => {
+    productsDao.getOne(req.params.barcode)
+        .then((product) => {
+            if (product) {
+                res.json({ data: product });
+            } else { 
+                res.json({ data: { message: `Product with barcode ${req.params.barcode} not found` } });
+            }
+        })
+        .catch((error) => {
+            res.json({
+                data: {
+                    message: error.message || 'Some error occurred while retrieving product.'
+                }
+            });
+        });
+};
+
+
 export default productsController;
