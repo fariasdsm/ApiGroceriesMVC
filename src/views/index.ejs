@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+    <title>Groceries</title>
+</head>
+<body>
+    <div data-role="page" id="products">
+        <!-- Header -->
+        <div data-role="header" style="overflow:hidden;">
+            <h1>Abarrotes App</h1>
+            <a href="#" data-icon="gear" class="ui-btn-right">Options</a>
+        </div>
+        <!-- Navbar -->
+        <div data-role="navbar">
+            <ul>
+                <li><a href="#products">Productos</a></li>
+                <li><a href="#employees">Empleados</a></li>
+                <li><a href="#customers">Clientes</a></li>
+            </ul>
+        </div>
+        <!-- Main Content -->
+        <div role="main" class="ui-content">
+            <form action="/groceries/products/insert" method="POST">
+                <div class="card">
+                    <div class="card-body">
+                        <label for="txt_barcode">Código de barras:</label>
+                        <input type="text" name="barcode" id="txt_barcode">
+                        <label for="txt_description">Descripción:</label>
+                        <input type="text" name="description" id="txt_description">
+                        <label for="txt_brand">Marca:</label>
+                        <input type="text" name="brand" id="txt_brand">
+                        <label for="txt_cost">Precio de compra:</label>
+                        <input type="number" name="cost" id="txt_cost">
+                        <label for="txt_price">Precio de venta:</label>
+                        <input type="number" name="price" id="txt_price">
+                        <label for="txt_expired_date">Fecha de caducidad:</label>
+                        <input type="date" name="expired_date" id="txt_expired_date">
+                        <label for="txt_stock">Existencias</label>
+                        <input type="number" name="stock" id="txt_stock">
+                        <button class="ui-btn ui-shadow">Guardar</button>
+                    </div>
+                </div>
+            </form>
+            <% products.forEach((product) => { %>
+                <div data-role="collapsible" data-inset="false">
+                    <h3><%= product.description %></h3>
+                    <ul data-role="listview">
+                        <li>Codigo de barra: <%= product.barcode %></li>
+                        <li>Marca: <%= product.brand %></li>
+                        <li>Precio de compra: <%= product.price %></li>
+                        <li>Precio de venta: <%= product.cost %></li>
+                        <li>Fecha de caducidad: <%= product.expired_date %></li>
+                        <li>Existencias: <%= product.stock %></li>
+                    </ul>
+                    <a class="ui-btn ui-btn-icon-bottom ui-icon-edit" href="/groceries/products/getOne/<%= product.barcode%>"></a>
+                </div>
+            <% }) %>
+        </div>
+        <!-- Footer -->
+        <div data-role="footer">
+            <h4>Derechos Reservados Tierra Negra</h4>
+        </div>
+    </div>
+</body>
+</html>

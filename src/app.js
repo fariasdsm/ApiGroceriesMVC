@@ -4,10 +4,12 @@ import morgan from 'morgan';
 import productsRoutes from './routes/products.routes.js';
 import employeesRoutes from './routes/employees.routes.js';
 import customersRoutes from './routes/customers.routes.js';
+import ejs from 'ejs';
 
 const app = express();
 //Settings
 app.set('port', process.env.PORT || 3000);
+app.set('view engine', ejs);
 //Middlewares
 app.use(morgan('dev'));
 app.use(express.json());

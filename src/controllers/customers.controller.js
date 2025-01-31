@@ -35,5 +35,57 @@ customersController.getOne = (req, res) => {
         });
 };
 
+customersController.insert = (req, res) => {
+    customersDao.insert(req.body)
+        .then((response) => {
+            res.json({ message: 'Customer inserted successfully', customer: response });
+        })
+        .catch((error) => {
+            res.json({
+                data: {
+                    message: error.message || 'Some error occurred while inserting customer.',
+                },
+            });
+        });
+};
+
+customersController.updateOne = (req, res) => {
+    customersDao.updateOne(req.body, req.params.customer_number)
+        .then((result) => {
+            res.json({
+                data: {
+                    message: 'Customer updated successfully',
+                    result: result,
+                },
+            });
+        })
+        .catch((error) => {
+            res.json({
+                data: {
+                    message: error.message || 'Some error occurred while updating customer.',
+                },
+            });
+        });
+};
+
+customersController.deleteOne = (req, res) => {
+    customersDao.deleteOne(req.params.customer_number)
+        .then((result) => {
+            res.json({
+                data: {
+                    message: 'Customer deleted successfully',
+                    result: result,
+                },
+            });
+        })
+        .catch((error) => {
+            res.json({
+                data: {
+                    message: error.message || 'Some error occurred while deleting customer.',
+                },
+            });
+        });
+}
+
 
 export default customersController;
