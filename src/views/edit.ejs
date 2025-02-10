@@ -5,10 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Actualizar</title>
 </head>
-<body>
-    <div role="page" class="products">
-        <form action="/groceries/products/updateOne/<%= product.barcode %>" method="POST">
-            <div class="card">
+<body>   
                 <div class="card-body">
                     <label for="txt_barcode">Código de barras:</label>
                     <input type="text" name="barcode" id="txt_barcode" value="<%= product.barcode %>">

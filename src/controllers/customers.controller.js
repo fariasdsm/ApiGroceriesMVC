@@ -1,91 +1,86 @@
 import customersDao from '../dao/customers.dao.js';
-const customersController = {}; 
+const customersController = {};
 
+// Obtener todos los clientes
 customersController.getAll = (req, res) => {
     customersDao.getAll()
         .then((customers) => { 
-            res.json({
-                data: customers,
-            });
+            res.json(customers);  // Cambiado de res.render a res.json
         })
         .catch((error) => {
-            res.json({
-                data: {
-                    message: error.message || 'Some error occurred while retrieving customers.', 
-                },
+            res.status(500).json({ 
+                message: error.message || 'Error al obtener los clientes.' 
             });
         });
 };
 
+// Obtener un cliente específico
 customersController.getOne = (req, res) => {
-    customersDao.getOne(req.params.customer_number) 
+    customersDao.getOne(req.params.customer_number)
         .then((customer) => {
             if (customer) {
-                res.json({ data: customer });
+                res.json(customer);
             } else {
-                res.json({ data: { message: `Customer with customer_number ${req.params.customer_number} not found` } });
+                res.status(404).json({ 
+                    message: 'Cliente no encontrado.' 
+                });
             }
         })
         .catch((error) => {
-            res.json({
-                data: {
-                    message: error.message || 'Some error occurred while retrieving customer.',
-                },
+            res.status(500).json({ 
+                message: error.message || 'Error al obtener el cliente.' 
             });
         });
 };
 
+// Insertar un nuevo cliente
 customersController.insert = (req, res) => {
     customersDao.insert(req.body)
         .then((response) => {
-            res.json({ message: 'Customer inserted successfully', customer: response });
+            res.status(201).json({ 
+                message: 'Cliente insertado exitosamente.', 
+                data: response 
+            });
         })
         .catch((error) => {
-            res.json({
-                data: {
-                    message: error.message || 'Some error occurred while inserting customer.',
-                },
+            res.status(500).json({ 
+                message: error.message || 'Error al insertar el cliente.' 
             });
         });
 };
 
+// Actualizar un cliente existente
 customersController.updateOne = (req, res) => {
     customersDao.updateOne(req.body, req.params.customer_number)
-        .then((result) => {
-            res.json({
-                data: {
-                    message: 'Customer updated successfully',
-                    result: result,
-                },
-            });
+        .then((response) => {
+            if (response.modifiedCount > 0) {
+                res.json({ message: 'Cliente actualizado exitosamente.' });
+            } else {
+                res.status(404).json({ message: 'Cliente no encontrado o sin cambios.' });
+            }
         })
         .catch((error) => {
-            res.json({
-                data: {
-                    message: error.message || 'Some error occurred while updating customer.',
-                },
+            res.status(500).json({ 
+                message: error.message || 'Error al actualizar el cliente.' 
             });
         });
 };
 
+// Eliminar un cliente
 customersController.deleteOne = (req, res) => {
     customersDao.deleteOne(req.params.customer_number)
-        .then((result) => {
-            res.json({
-                data: {
-                    message: 'Customer deleted successfully',
-                    result: result,
-                },
-            });
+        .then((response) => {
+            if (response.deletedCount > 0) {
+                res.json({ message: 'Cliente eliminado exitosamente.' });
+            } else {
+                res.status(404).json({ message: 'Cliente no encontrado.' });
+            }
         })
         .catch((error) => {
-            res.json({
-                data: {
-                    message: error.message || 'Some error occurred while deleting customer.',
-                },
+            res.status(500).json({ 
+                message: error.message || 'Error al eliminar el cliente.' 
             });
         });
-}
-
+};
 
 export default customersController;

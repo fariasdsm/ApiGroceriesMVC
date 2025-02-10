@@ -1,97 +1,84 @@
 import productsDao from '../dao/products.dao.js';
 const productsController = {};
 
+// Obtener todos los productos
 productsController.getAll = (req, res) => {
     productsDao.getAll()
         .then((products) => {
-            res.render('../src/views/index.ejs', {products});
-            // Si quieres devolver un JSON en lugar de renderizar:
-            /*
-            res.json({
-                data: products
-            });
-            */
+            res.json(products);  // Enviar productos como JSON
         })
         .catch((error) => {
-            res.json({
-                data: {
-                    message: error.message || 'Some error occurred while retrieving products.'
-                }
+            res.status(500).json({
+                message: error.message || 'Error al obtener los productos.'
             });
         });
 };
 
-
+// Obtener un producto específico
 productsController.getOne = (req, res) => {
     productsDao.getOne(req.params.barcode)
         .then((product) => {
-            /*if (product) {
-                res.json({ data: product });
-            } else { 
-                res.json({ data: { message: `Product with barcode ${req.params.barcode} not found` } });
-            }*/
-           res.render('../src/views/edit.ejs', {product});
+            if (product) {
+                res.json(product);
+            } else {
+                res.status(404).json({ message: `Producto con código de barras ${req.params.barcode} no encontrado.` });
+            }
         })
         .catch((error) => {
-            res.json({
-                data: {
-                    message: error.message || 'Some error occurred while retrieving product.'
-                }
+            res.status(500).json({
+                message: error.message || 'Error al obtener el producto.'
             });
         });
 };
 
+// Insertar un nuevo producto
 productsController.insert = (req, res) => {
     productsDao.insert(req.body)
         .then((response) => {
-            /*res.json({ mmesage: 'Product inserted successfully', product: response });*/
-            res.redirect('/groceries/products/getAll')
+            res.status(201).json({ 
+                message: 'Producto insertado exitosamente.', 
+                data: response 
+            });
         })
         .catch((error) => {
-            res.json({
-                data: {
-                    message: error.message || 'Some error occurred while inserting product.'
-                }
+            res.status(500).json({
+                message: error.message || 'Error al insertar el producto.'
             });
         });
 };
 
+// Actualizar un producto existente
 productsController.updateOne = (req, res) => {
     productsDao.updateOne(req.body, req.params.barcode)
         .then((result) => {
-            res.json({
-            data: {
-                message: 'Product updated successfully',
-                result: result
+            if (result.modifiedCount > 0) {
+                res.json({ message: 'Producto actualizado exitosamente.' });
+            } else {
+                res.status(404).json({ message: 'Producto no encontrado o sin cambios.' });
             }
         })
-        })
         .catch((error) => {
-            res.json({
-                data: {
-                    message: error.message || 'Some error occurred while updating product.'
-                }
+            res.status(500).json({
+                message: error.message || 'Error al actualizar el producto.'
             });
         });
 };
 
+// Eliminar un producto
 productsController.deleteOne = (req, res) => {
     productsDao.deleteOne(req.params.barcode)
-        .then((productDeleted) => {
-            res.json({
-                data: {
-                    message: 'Product deleted successfully',
-                    product_deleted: productDeleted
-                }
-            });
+        .then((result) => {
+            if (result.deletedCount > 0) {
+                res.json({ message: 'Producto eliminado exitosamente.' });
+            } else {
+                res.status(404).json({ message: 'Producto no encontrado.' });
+            }
         })
         .catch((error) => {
-            res.json({
-                data: {
-                    message: error.message || 'Some error occurred while deleting product.'
-                }
+            res.status(500).json({
+                message: error.message || 'Error al eliminar el producto.'
             });
         });
-}
+};
 
 export default productsController;

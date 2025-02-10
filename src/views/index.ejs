@@ -46,20 +46,21 @@
                     </div>
                 </div>
             </form>
-            <% products.forEach((product) => { %>
-                <div data-role="collapsible" data-inset="false">
-                    <h3><%= product.description %></h3>
-                    <ul data-role="listview">
-                        <li>Codigo de barra: <%= product.barcode %></li>
-                        <li>Marca: <%= product.brand %></li>
-                        <li>Precio de compra: <%= product.price %></li>
-                        <li>Precio de venta: <%= product.cost %></li>
-                        <li>Fecha de caducidad: <%= product.expired_date %></li>
-                        <li>Existencias: <%= product.stock %></li>
-                    </ul>
-                    <a class="ui-btn ui-btn-icon-bottom ui-icon-edit" href="/groceries/products/getOne/<%= product.barcode%>"></a>
-                </div>
-            <% }) %>
+            <ul data-role="listview" data-filter="true" data-filter-placeholder="Buscar productos" data-inset="true">
+                <% products.forEach(product => { %>
+                    <div data-role="collapsible" data-content-theme="false">
+                        <h4><%= product.description %></h4>
+                        <p>Código de barras: <%= product.barcode %></p>
+                        <p>Marca: <%= product.brand %></p>
+                        <p>Precio de compra: <%= product.cost %></p>
+                        <p>Precio de venta: <%= product.price %></p>
+                        <p>Fecha de caducidad: <%= product.expired_date %></p>
+                        <p>Existencias: <%= product.stock %></p>
+                        <a href="/groceries/products/getOne/<%= product.barcode %>" class="ui-btn ui-icon-edit ui-btn-icon-bottom">Editar</a>
+                        <a href="/groceries/products/deleteOne/<%= product.barcode %>" class="ui-btn ui-icon-delete ui-btn-icon-bottom">Eliminar</a>
+                    </div>
+                <% }); %>
+            </ul>           
         </div>
         <!-- Footer -->
         <div data-role="footer">
