@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+    <title>Clientes</title>
+</head>
+<body>
+    <div data-role="page" id="customers">
+        <!-- Header -->
+        <div data-role="header" style="overflow:hidden;">
+            <h1>Abarrotes App</h1>
+            <a href="#" data-icon="gear" class="ui-btn-right">Options</a>
+        </div>
+
+        <!-- Navbar -->
+        <div data-role="navbar">
+            <ul>
+                <li><a href="/groceries/products/getAll">Productos</a></li>
+                <li><a href="/groceries/employees/getAll">Empleados</a></li>
+                <li><a href="#customers" class="ui-btn-active">Clientes</a></li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div role="main" class="ui-content">
+            <form action="/groceries/customers/insert" method="POST">
+                <div class="card">
+                    <div class="card-body">
+                        <label for="txt_customer_number">Número de Cliente:</label>
+                        <input type="text" name="customer_number" id="txt_customer_number" required>
+
+                        <label for="txt_name">Nombre:</label>
+                        <input type="text" name="name" id="txt_name" required>
+
+                        <label for="txt_lastname">Apellido:</label>
+                        <input type="text" name="lastname" id="txt_lastname" required>
+
+                        <label for="txt_age">Edad:</label>
+                        <input type="number" name="age" id="txt_age" required>
+
+                        <label for="txt_email">Email:</label>
+                        <input type="email" name="email" id="txt_email" required>
+
+                        <label for="txt_telephone">Teléfono:</label>
+                        <input type="text" name="telephone" id="txt_telephone" required>
+
+                        <button class="ui-btn ui-shadow">Guardar</button>
+                    </div>
+                </div>
+            </form>
+
+            <ul data-role="listview" data-filter="true" data-filter-placeholder="Buscar clientes..." data-inset="true">
+                <% customers.forEach(customer => { %>
+                    <div data-role="collapsible" data-content-theme="false">
+                        <h4><%= customer.name %> <%= customer.lastname %></h4>
+                        <p>Número de Cliente: <%= customer.customer_number %></p>
+                        <p>Edad: <%= customer.age %></p>
+                        <p>Email: <%= customer.email %></p>
+                        <p>Teléfono: <%= customer.telephone %></p>
+                        <a href="/groceries/customers/getOne/<%= customer.customer_number %>" class="ui-btn ui-icon-edit ui-btn-icon-bottom">Editar</a>
+                        <form action="/groceries/customers/deleteOne/<%= customer.customer_number %>" method="POST" style="display:inline;">
+                            <button type="submit" class="ui-btn ui-icon-delete ui-btn-icon-bottom">Eliminar</button>
+                        </form>
+                    </div>
+                <% }); %>
+            </ul>           
+        </div>
+
+        <!-- Footer -->
+        <div data-role="footer">
+            <h4>Derechos Reservados Tierra Negra</h4>
+        </div>
+    </div>
+</body>
+</html>

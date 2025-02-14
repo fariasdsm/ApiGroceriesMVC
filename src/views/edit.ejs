@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actualizar</title>
+</head>
+<body>   
+                <div class="card-body">
+                    <label for="txt_barcode">Código de barras:</label>
+                    <input type="text" name="barcode" id="txt_barcode" value="<%= product.barcode %>">
+                    <label for="txt_description">Descripción:</label>
+                    <input type="text" name="description" id="txt_description" value="<%= product.description %>">
+                    <label for="txt_brand">Marca:</label>
+                    <input type="text" name="brand" id="txt_brand" value="<%= product.brand %>">
+                    <label for="txt_cost">Precio de compra:</label>
+                    <input type="number" name="cost" id="txt_cost" value="<%= product.cost %>">
+                    <label for="txt_price">Precio de venta:</label>
+                    <input type="number" name="price" id="txt_price" value="<%= product.price %>">
+                    <label for="txt_expired_date">Fecha de caducidad:</label>
+                    <input type="date" name="expired_date" id="txt_expired_date" value="<%= product.expired_date %>">
+                    <label for="txt_stock">Existencias</label>
+                    <input type="number" name="stock" id="txt_stock" value="<%= product.stock %>">
+                    <button class="ui-btn ui-shadow">Actualizar</button>
+                </div>
+            </div>
+</body>
+</html>
