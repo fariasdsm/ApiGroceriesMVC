@@ -1,5 +1,7 @@
 import employeesDao from '../dao/employees.dao.js';
 const employeesController = {};
+import mongoose from 'mongoose';
+
 
 // Obtener todos los empleados
 employeesController.getAll = (req, res) => {
@@ -65,20 +67,35 @@ employeesController.updateOne = (req, res) => {
 };
 
 // Eliminar un empleado
-employeesController.deleteOne = (req, res) => {
-    employeesDao.deleteOne(req.params.employee_number)
-        .then((result) => {
-            if (result.deletedCount > 0) {
-                res.json({ message: 'Empleado eliminado exitosamente.' });
-            } else {
-                res.status(404).json({ message: 'Empleado no encontrado.' });
-            }
-        })
-        .catch((error) => {
-            res.status(500).json({
-                message: error.message || 'Error al eliminar el empleado.'
-            });
-        });
+
+employeesController.deleteOne = async (req, res) => {
+    try {
+        console.log("🔍 Intentando eliminar el empleado con ID:", req.params.id);
+
+        // Validar si el ID es undefined, vacío o no es un ObjectId válido
+        if (!req.params.id || !mongoose.Types.ObjectId.isValid(req.params.id)) {
+            console.error("❌ ID inválido:", req.params.id);
+            return res.status(400).json({ message: "ID no válido o vacío" });
+        }
+
+        // Convertir a ObjectId de forma segura
+        const id = new mongoose.Types.ObjectId(req.params.id);
+
+        const result = await employeesDao.deleteOne(id);
+
+        if (result) {
+            console.log("✅ Empleado eliminado correctamente:", id);
+            res.json({ message: 'Empleado eliminado exitosamente.' });
+        } else {
+            console.log("❌ Empleado no encontrado con ID:", id);
+            res.status(404).json({ message: 'Empleado no encontrado.' });
+        }
+    } catch (error) {
+        console.error("❌ Error al eliminar empleado:", error);
+        res.status(500).json({ message: error.message || 'Error al eliminar el empleado.' });
+    }
 };
+
+
 
 export default employeesController;

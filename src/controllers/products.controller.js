@@ -1,84 +1,92 @@
+import mongoose from 'mongoose';
 import productsDao from '../dao/products.dao.js';
+
 const productsController = {};
 
-// Obtener todos los productos
-productsController.getAll = (req, res) => {
-    productsDao.getAll()
-        .then((products) => {
-            res.json(products);  // Enviar productos como JSON
-        })
-        .catch((error) => {
-            res.status(500).json({
-                message: error.message || 'Error al obtener los productos.'
-            });
-        });
+productsController.getAll = async (req, res) => {
+    try {
+        const products = await productsDao.getAll();
+        res.json(products);
+    } catch (error) {
+        res.status(500).json({ message: 'Error al obtener los productos.' });
+    }
 };
 
-// Obtener un producto específico
-productsController.getOne = (req, res) => {
-    productsDao.getOne(req.params.barcode)
-        .then((product) => {
-            if (product) {
-                res.json(product);
-            } else {
-                res.status(404).json({ message: `Producto con código de barras ${req.params.barcode} no encontrado.` });
-            }
-        })
-        .catch((error) => {
-            res.status(500).json({
-                message: error.message || 'Error al obtener el producto.'
-            });
-        });
+productsController.getOne = async (req, res) => {
+    try {
+        const { id } = req.params;
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ message: 'ID no válido' });
+        }
+        const product = await productsDao.getOne(id);
+        product ? res.json(product) : res.status(404).json({ message: 'Producto no encontrado' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error al obtener el producto.' });
+    }
 };
 
-// Insertar un nuevo producto
-productsController.insert = (req, res) => {
-    productsDao.insert(req.body)
-        .then((response) => {
-            res.status(201).json({ 
-                message: 'Producto insertado exitosamente.', 
-                data: response 
-            });
-        })
-        .catch((error) => {
-            res.status(500).json({
-                message: error.message || 'Error al insertar el producto.'
-            });
+productsController.insert = async (req, res) => {
+    try {
+        console.log("📥 Recibiendo datos en el backend:", req.body);
+        console.log("🔍 Tipo de `barcode` recibido:", typeof req.body.barcode); // 👈 Verifica el tipo de dato
+
+        const { barcode, description, brand, price, cost, expired_date, stock } = req.body;
+
+        // Validar que los campos requeridos estén presentes
+        if (!barcode || !description || !brand || !price || !cost || !expired_date || !stock) {
+            console.error("❌ Datos inválidos o faltantes:", req.body);
+            return res.status(400).json({ message: "Todos los campos son obligatorios, incluyendo el código de barras." });
+        }
+
+        // Asegurar que `barcode` es un String válido y sin espacios extra
+        const formattedBarcode = String(barcode).trim(); 
+
+        // Convertir a números los campos numéricos
+        const newProduct = await productsDao.insert({
+            barcode: formattedBarcode,
+            description,
+            brand,
+            price: Number(price),
+            cost: Number(cost),
+            expired_date,
+            stock: Number(stock)
         });
+
+        console.log("✅ Producto insertado correctamente:", newProduct);
+        res.status(201).json({ message: "Producto insertado", data: newProduct });
+
+    } catch (error) {
+        console.error("❌ Error al insertar producto en MongoDB:", error);
+        res.status(500).json({ message: error.message || "Error al insertar el producto." });
+    }
 };
 
-// Actualizar un producto existente
-productsController.updateOne = (req, res) => {
-    productsDao.updateOne(req.body, req.params.barcode)
-        .then((result) => {
-            if (result.modifiedCount > 0) {
-                res.json({ message: 'Producto actualizado exitosamente.' });
-            } else {
-                res.status(404).json({ message: 'Producto no encontrado o sin cambios.' });
-            }
-        })
-        .catch((error) => {
-            res.status(500).json({
-                message: error.message || 'Error al actualizar el producto.'
-            });
-        });
+
+
+productsController.updateOne = async (req, res) => {
+    try {
+        const { id } = req.params;
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ message: 'ID no válido' });
+        }
+        const updatedProduct = await productsDao.updateOne(id, req.body);
+        updatedProduct ? res.json({ message: 'Producto actualizado' }) : res.status(404).json({ message: 'Producto no encontrado' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error al actualizar el producto.' });
+    }
 };
 
-// Eliminar un producto
-productsController.deleteOne = (req, res) => {
-    productsDao.deleteOne(req.params.barcode)
-        .then((result) => {
-            if (result.deletedCount > 0) {
-                res.json({ message: 'Producto eliminado exitosamente.' });
-            } else {
-                res.status(404).json({ message: 'Producto no encontrado.' });
-            }
-        })
-        .catch((error) => {
-            res.status(500).json({
-                message: error.message || 'Error al eliminar el producto.'
-            });
-        });
+productsController.deleteOne = async (req, res) => {
+    try {
+        const { id } = req.params;
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ message: 'ID no válido' });
+        }
+        const deletedProduct = await productsDao.deleteOne(id);
+        deletedProduct ? res.json({ message: 'Producto eliminado' }) : res.status(404).json({ message: 'Producto no encontrado' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error al eliminar el producto.' });
+    }
 };
 
 export default productsController;

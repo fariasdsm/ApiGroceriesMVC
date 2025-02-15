@@ -1,12 +1,21 @@
-import {Router} from 'express';
+import { Router } from 'express';
 import employeesController from '../controllers/employees.controller.js';
 
 const router = Router();
 
+// ✅ Obtener todos los empleados
 router.get('/getAll', employeesController.getAll);
-router.get('/getOne/:employee_number', employeesController.getOne);
+
+// ✅ Obtener un empleado por _id en lugar de employee_number
+router.get('/getOne/:id', employeesController.getOne);
+
+// ✅ Insertar un nuevo empleado
 router.post('/insert', employeesController.insert);
-router.put('/updateOne/:employee_number', employeesController.updateOne);
-router.delete('/deleteOne/:employee_number', employeesController.deleteOne);
+
+// ✅ Actualizar un empleado por _id
+router.put('/updateOne/:id', employeesController.updateOne);
+
+// ✅ Eliminar un empleado por _id
+router.delete('/deleteOne/:id', employeesController.deleteOne);
 
 export default router;
