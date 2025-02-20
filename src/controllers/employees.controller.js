@@ -51,17 +51,17 @@ employeesController.insert = (req, res) => {
 
 // Actualizar un empleado existente
 employeesController.updateOne = (req, res) => {
-    employeesDao.updateOne(req.body, req.params.employee_number)
+    const { id } = req.params; // Ahora usamos el _id
+    employeesDao.updateOne(req.body, id) // Cambia employee_number por id
         .then((result) => {
-            if (result.modifiedCount > 0) {
-                res.json({ message: 'Empleado actualizado exitosamente.' });
-            } else {
-                res.status(404).json({ message: 'Empleado no encontrado o sin cambios.' });
+            if (!result) {
+                return res.status(404).json({ message: 'Empleado no encontrado o sin cambios.' });
             }
+            res.json({ message: 'Empleado actualizado exitosamente.', data: result });
         })
         .catch((error) => {
             res.status(500).json({
-                message: error.message || 'Error al actualizar el empleado.'
+                message: error.message || 'Error al actualizar el empleado.',
             });
         });
 };

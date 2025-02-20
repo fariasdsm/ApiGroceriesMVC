@@ -15,8 +15,14 @@ employeesDao.insert = async (employee) => {
     return await Employees.create(employee);
 };
 
-employeesDao.updateOne = async (employee, employee_number) => {
-    return await Employees.findOneAndUpdate({ employee_number }, employee);
+employeesDao.updateOne = async (employeeData, id) => {
+    try {
+        const updatedEmployee = await Employees.findByIdAndUpdate(id, employeeData, { new: true });
+        return updatedEmployee;
+    } catch (error) {
+        console.error("❌ Error en updateOne DAO:", error);
+        throw error;
+    }
 };
 
 employeesDao.deleteOne = async (id) => {
